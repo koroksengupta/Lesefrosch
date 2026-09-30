@@ -35,22 +35,35 @@ svg{display:block}
 .screen.on{display:flex}
 
 /* ---------- Menü ---------- */
-#menu{align-items:center;justify-content:center}
-.menu-wrap{display:flex;flex-direction:column;align-items:center;gap:min(5vmin,32px);padding:16px}
+#menu{align-items:center}
+.brand{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:max(16px,3vh) 16px 0;text-align:center}
+.brand-row{display:flex;align-items:center;gap:12px}
+.brand-row svg.frog{width:min(14vmin,72px)}
+.brand h1{margin:0;font-size:min(9vmin,52px);font-weight:700;color:var(--green-d);letter-spacing:.01em;line-height:1.1}
+.brand .sub{margin-top:6px;font-size:min(4.2vmin,22px);color:var(--muted);font-weight:700}
+.brand .sub b{color:var(--ink)}
+.menu-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:min(5vmin,32px);padding:16px}
 @media (orientation:landscape){.menu-wrap{flex-direction:row}}
 .today{position:relative;width:min(64vmin,420px);height:min(50vmin,320px);border-radius:44px;
   background:linear-gradient(#78d985,#3fa34d);box-shadow:0 10px 0 var(--green-d);display:flex;align-items:center;justify-content:center;gap:4%}
-.today .frog{width:48%}
-.today .play{width:26%;color:#fff;filter:drop-shadow(0 4px 0 rgba(0,0,0,.18))}
+.today{flex-direction:column;gap:2px}
+.today .today-row{display:flex;align-items:center;justify-content:center;gap:8%;width:100%}
+.today .frog{width:42%}
+.today .today-lbl{color:#fff;font-weight:700;font-size:min(8vmin,44px);line-height:1;text-shadow:0 3px 0 rgba(0,0,0,.18)}
+.today .play{width:22%;color:#fff;filter:drop-shadow(0 4px 0 rgba(0,0,0,.18))}
 .today .play svg{width:100%;height:auto}
 .today .tick{position:absolute;top:-14px;right:-14px;width:72px;height:72px;border-radius:50%;background:#fff;color:var(--green);
   display:none;align-items:center;justify-content:center;box-shadow:0 4px 0 var(--shadow)}
 .today.done .tick{display:flex}
 .today.fresh{animation:pulse 2.4s ease-in-out infinite}
 .side{display:grid;grid-template-columns:repeat(4,auto);gap:min(4vmin,22px)}
-@media (orientation:landscape){.side{grid-template-columns:repeat(2,auto)}}
+@media (orientation:landscape),(max-width:520px){.side{grid-template-columns:repeat(2,auto)}}
 .lvl{width:min(20vmin,128px);height:min(20vmin,128px);min-width:84px;min-height:84px;border-radius:30px;background:#fff;
-  box-shadow:0 7px 0 var(--shadow);display:flex;align-items:center;justify-content:center;gap:2px;padding:0 4px;overflow:hidden;font-weight:700}
+  box-shadow:0 7px 0 var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px 4px;overflow:hidden;font-weight:700}
+.lvl:not(.bigicon){width:min(24vmin,140px);height:min(27vmin,156px);min-width:118px;min-height:128px}
+.lvl .ico{display:flex;align-items:center;justify-content:center;gap:2px;min-height:48%;width:100%}
+.lvl .lbl{font-size:min(3.8vmin,18px);line-height:1.15;text-align:center;color:var(--ink);font-family:var(--font)}
+.bigicon .lbl{font-size:min(5vmin,28px)}
 .lvl .mini-pic{font-size:min(5.5vmin,34px)}
 .lvl .mini-letter{font-size:min(5.5vmin,34px)}
 .lvl .mini-arrow{font-size:min(4vmin,22px);color:var(--muted)}
@@ -179,7 +192,7 @@ svg.frog{height:auto}
 .hopper svg{width:100%}
 .bigicon .mini-pic,.bigicon .mini-letter{font-size:min(10vmin,60px)}
 .bigicon .mini-tile{width:min(11vmin,66px);height:min(11vmin,66px);font-size:min(9vmin,50px)}
-.bigicon{width:min(30vmin,180px);height:min(30vmin,180px);min-width:0;min-height:0;pointer-events:none}
+.bigicon{width:min(34vmin,200px);height:min(34vmin,200px);min-width:0;min-height:0;pointer-events:none}
 .stars{display:flex;gap:10px}
 .stars svg{width:min(12vmin,64px);height:min(12vmin,64px)}
 
@@ -245,6 +258,7 @@ svg.frog{height:auto}
 <noscript><p style="font:20px sans-serif;padding:20px">Lesefrosch braucht JavaScript.</p></noscript>
 
 <section id="menu" class="screen on" aria-label="Menü">
+  <header class="brand"><div class="brand-row"><span id="brandFrog"></span><h1>Lesefrosch</h1></div><div class="sub" id="menuSub"></div></header>
   <div class="menu-wrap">
     <button id="btnToday" class="today" aria-label="Heute"></button>
     <div class="side">
@@ -840,14 +854,14 @@ function fillPad(i){ const p=$$('#pads i')[i]; if(p){ p.classList.add('done'); p
 
 function renderMenu(){
   const t=$('#btnToday'); const today=todayStr();
-  t.innerHTML = ICON.frog + `<span class="play">${ICON.play}</span><span class="tick">${ICON.check}</span>`;
+  t.innerHTML = `<span class="today-row">${ICON.frog}<span class="play">${ICON.play}</span></span><span class="today-lbl">Heute</span><span class="tick">${ICON.check}</span>`;
   const done = S.pending && S.lastDone && S.lastDone.date===today;
   t.classList.toggle('done', !!done); t.classList.toggle('fresh', !done);
-  const L=$$('.lvl');
-  L[0].innerHTML = `<span class="mini-pic emo">🐭</span><span class="mini-arrow">→</span><span class="mini-letter">Mm</span>`;
-  L[1].innerHTML = `<span class="mini-pond">${ICON.frog}<span class="mini-dots"><i></i><i></i><i></i></span></span>`;
-  L[2].innerHTML = `<span class="mini-tile">M</span><span class="mini-arrow">+</span><span class="mini-tile">a</span>`;
-  L[3].innerHTML = ICON.album;
+  $$('#menu .lvl').forEach((b,i)=>{ b.innerHTML = lvlInner(i+1); });
+  $('#brandFrog').innerHTML = ICON.frog;
+  const m=MODS[S.cur];
+  const what = m.review ? 'Wiederholungstag' : `neue Buchstaben: <b>${m.letters.join(' ')}</b>`;
+  $('#menuSub').innerHTML = done ? `Tag ${m.tag} geschafft – morgen geht es weiter` : `Tag ${m.tag} · ${what}`;
   updateGateWarn();
 }
 function goMenu(){ abortRun(); REPLAY=null; renderMenu(); show('menu'); }
@@ -1091,12 +1105,15 @@ async function stepIntro(mi, run){
   }
   stopSpeech();
 }
-function levelIcon(l){
-  if(l===1) return `<div class="lvl bigicon"><span class="mini-pic emo">🐭</span><span class="mini-arrow">→</span><span class="mini-letter">Mm</span></div>`;
-  if(l===2) return `<div class="lvl bigicon"><span class="mini-pond">${ICON.frog}<span class="mini-dots"><i></i><i></i><i></i></span></span></div>`;
-  if(l===3) return `<div class="lvl bigicon"><span class="mini-tile">M</span><span class="mini-arrow">+</span><span class="mini-tile">a</span></div>`;
-  return `<div class="lvl bigicon">${ICON.frog}</div>`;
+const LEVEL_NAME = { 1:'Anlaute', 2:'Silben klatschen', 3:'Silben lesen', 4:'Sticker' };
+function lvlInner(l){
+  const ico = l===1 ? `<span class="mini-pic emo">🐭</span><span class="mini-arrow">→</span><span class="mini-letter">Mm</span>`
+    : l===2 ? `<span class="mini-pond">${ICON.frog}<span class="mini-dots"><i></i><i></i><i></i></span></span>`
+    : l===3 ? `<span class="mini-tile">M</span><span class="mini-arrow">+</span><span class="mini-tile">a</span>`
+    : l===4 ? ICON.album : ICON.frog;
+  return `<span class="ico">${ico}</span>` + (LEVEL_NAME[l]?`<span class="lbl">${LEVEL_NAME[l]}</span>`:'');
 }
+function levelIcon(l){ return `<div class="lvl bigicon">${lvlInner(l)}</div>`; }
 async function transition(level, run, text){
   setPads(0); REPLAY=null;
   view().innerHTML = `<div class="trans">${levelIcon(level)}</div>`;
